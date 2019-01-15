@@ -1,0 +1,39 @@
+---------------------------------QUERY SNTAX-------------------------------------------------------------------
+SELECT d.PALLET_ID
+      ,SUM(d.[QTY]) QTY
+	  ,h.JulianDate
+	  ,h.DATE_CREATE
+	  ,h.WarehouseID
+	  ,s.desriprtion
+	  ,r.REASON
+      
+  FROM [TEST].[dbo].[PALLET_DETAILS] d
+  JOIN [TEST].[dbo].[PALLET_HEADER] h
+  ON d.PALLET_ID = h.PALLET_ID
+  JOIN [TEST].[dbo].[PALLET_STATUS] s
+  ON h.PALLET_STATUS = s.status
+  JOIN [TEST].[dbo].[HOLD_REASON] r
+  ON h.REASON_ID = r.HOLD_REASON_ID
+
+  WHERE d.PALLET_ID	 LIKE 4824768
+
+  GROUP BY d.PALLET_ID,h.JulianDate,h.DATE_CREATE,h.WarehouseID,s.desriprtion,r.REASON
+
+  ----------------------------------LINQ SYNAX---------------------------------------------------------------------
+
+  var pH = _context.BcPalletD.Join(_context.BcPalletH, d => d.PalletId, h => h.PalletId, (d, h) => new { d, h }
+
+                ).Join(_context.BcPalletStatus, dh => dh.h.PalletStatus, s => s.Status, (dh, s) => new { dh, s }
+
+                ).Join(_context.BcHoldReason, dhs => dhs.dh.h.ReasonId, r => r.HoldReasonId, (dhs, r) => new
+                {
+                    palletID = dhs.dh.d.PalletId,
+                    //qty = dhs.dh.d.Qty,
+                    //SUM QTY
+                    qtyS = _context.BcPalletD.Where(pid => pid.PalletId == PalletID).Sum(q => q.Qty),
+                    jullianDate = dhs.dh.h.JulianDate,
+                    dateCreate = dhs.dh.h.DateCreate,
+                    wareHouseID = dhs.dh.h.WarehouseId,
+                    status = dhs.s.Desriprtion,
+                    reason = r.Reason
+                }).Where(pid => pid.palletID == PalletID).FirstOrDefault();
