@@ -1,4 +1,4 @@
----------------------------------QUERY SNTAX-------------------------------------------------------------------
+---------------------------------SQL SERVER QUERY SYNTAX-------------------------------------------------------------------
 SELECT d.PALLET_ID
       ,SUM(d.[QTY]) QTY
 	  ,h.JulianDate
@@ -19,7 +19,7 @@ SELECT d.PALLET_ID
 
   GROUP BY d.PALLET_ID,h.JulianDate,h.DATE_CREATE,h.WarehouseID,s.desriprtion,r.REASON
 
-  ----------------------------------LINQ SYNAX---------------------------------------------------------------------
+  ----------------------------------LINQ SYNTAX---------------------------------------------------------------------
 
   var pH = _context.BcPalletD.Join(_context.BcPalletH, d => d.PalletId, h => h.PalletId, (d, h) => new { d, h }
 
